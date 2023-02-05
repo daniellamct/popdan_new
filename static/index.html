@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<style>
+    #title{
+        -webkit-text-stroke: 2px rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
+        font-size: 4em;
+        margin-top: 5px;
+        font-family: 'Rowdies', cursive;
+
+        display: flex;
+        justify-content: center;
+    }
+    #score{
+        color: rgb(0, 0, 0);
+        font-family: 'Roboto', sans-serif;
+        margin-top: 32px;
+        margin-bottom: 20px;
+        font-size: 4em;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>POPDAN</title>
+    </head>
+
+    <body style="background: linear-gradient(to right, #ffefba, #ffffff)">
+        
+        <h1 id="title">POP_DAN</h1>
+        <p id="score" ></p>
+
+        <div style="text-align: center">
+        <img id="dan_mouth" src="images/mouth_closed.png" style="max-width:100%; height:70vh;"
+                onpointerup="close_mouth()" onpointerdown="open_mouth(); add_score();">
+        </div>
+
+        <script>
+            async function add_score(){
+                let resp = await fetch("/api/add_clicks", {
+                    headers: {"User-Agent": "popdan"}
+                });
+                await resp.json();
+            }
+
+            async function get_score(){
+                let resp = await fetch("/api/get_clicks");
+                document.getElementById("score").innerHTML = await resp.json();
+            }
+
+            async function open_mouth(){
+                dan_mouth.src = "images/mouth_opened.png";
+                (new Audio("images/effect_1.mp3")).play();
+                await get_score();
+            }
+                        
+            function close_mouth(){
+                dan_mouth.src = "images/mouth_closed.png";
+            }
+            
+            window.onload = get_score();
+        </script>
+    </body>
+</html>
